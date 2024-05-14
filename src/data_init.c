@@ -5,46 +5,98 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/10 18:40:06 by tchartie          #+#    #+#             */
-/*   Updated: 2024/04/11 22:04:00 by tchartie         ###   ########.fr       */
+/*   Created: 2024/05/14 17:38:37 by tchartie          #+#    #+#             */
+/*   Updated: 2024/05/14 20:14:15 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
 
-static int	grab_arg(char *arg)
+static int	init_fork(t_data *table)
 {
-	int	value;
+	int	i;
+	int	ret;
 
-	if (is_int(arg))
+	i = 0;
+	while (i < table->nb_philo)
 	{
-		value = ft_atol(arg);
-		if (value > INT_MAX)
-			error_msg("Error when creating arg. Values greater than INT_MAX.");
-		else if (value < 0)
-			error_msg("Error. You need to put positive values.");
-		else
-			return (value);
+		ret = handle_mutex(&table->forks[i].fork, INIT);
+		if (ret != GOOD)
+			return (FAILED);
+		table->forks[i].id = i;
+		i++;
 	}
-	else
-		error_msg("Error when creating arg. You need to put positive values.");
-	return (-1);
+	return (GOOD);
 }
 
-void	parse_data(t_data *arg, int argc, char **argv)
+static void	give_philo_forks(t_data *table, t_fork *fork, int pos)
 {
-	arg->nb_philo = grab_arg(argv[1]);
-	if (arg->nb_philo == -1)
+	int	philo_nb;
+
+	philo_nb = table->nb_philo;
+	if (table->philos->id % 2 == 0)
+	{
+		table->philos->first_fork = &fork[pos];
+		table->philos->second_fork = &fork[(pos + 1) % 2];
+	}
+	else
+	{
+		table->philos->first_fork = &fork[(pos + 1) % 2];
+		table->philos->second_fork = &fork[pos];
+	}
+}
+
+static int	init_philo(t_data *table)
+{
+	int	i;
+	int	ret;
+
+	i = 0;
+	while (i < table->nb_philo)
+	{
+		table->philos[i].id = i;
+		table->philos[i].nb_meal = 0;
+		table->philos[i].full_meal = FALSE;
+		table->philos[i].last_meal = 0;
+		ret = handle_mutex(&table->philos[i].philo, INIT);
+		if (ret != GOOD)
+			return (FAILED);
+		give_philo_forks(table, table->forks, i);
+		i++;
+	}
+	return (GOOD);
+}
+
+static void	thread_error(t_data *table)
+{
+	free(table->philos);
+	free(table->forks);
+}
+
+void	data_init(t_data *table)
+{
+	int	ret;
+
+	table->end = FALSE;
+	table->philos = malloc(sizeof(t_philo) * table->nb_philo);
+	if (!(table->philos))
 		return ;
-	arg->time_die = grab_arg(argv[2]);
-	if (arg->time_die == -1)
+	table->forks = malloc(sizeof(t_fork) * table->nb_philo);
+	if (!(table->forks))
+	{
+		free (table->philos);
 		return ;
-	arg->time_eat = grab_arg(argv[3]);
-	if (arg->time_eat == -1)
+	}
+	ret = init_fork(table);
+	if (ret != GOOD)
+	{
+		thread_error(table);
 		return ;
-	arg->time_sleep = grab_arg(argv[4]);
-	if (arg->time_sleep == -1)
+	}
+	ret = init_philo(table);
+	if (ret != GOOD)
+	{
+		thread_error(table);
 		return ;
-	if (argc == 6)
-		arg->nb_eat = grab_arg(argv[5]);
+	}
 }

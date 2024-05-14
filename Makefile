@@ -6,7 +6,7 @@
 #    By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/18 18:00:04 by tchartie          #+#    #+#              #
-#    Updated: 2024/04/11 21:27:51 by tchartie         ###   ########.fr        #
+#    Updated: 2024/05/14 18:01:58 by tchartie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,8 +44,10 @@ SRCS_DIR	=		src/
 OBJS_DIR	=		obj/
 
 SRCS		=		main.c \
-					data_init.c \
+					parsing.c \
 					parsing_utils.c \
+					data_init.c \
+					handle_mutex.c \
 					error_check.c
 
 OBJS		=		$(SRCS:.c=.o)
