@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   data_init.c                                        :+:      :+:    :+:   */
+/*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:40:06 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/14 17:11:03 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/15 20:47:28 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	grab_arg(char *arg)
 void	parsing(t_data *arg, int argc, char **argv)
 {
 	arg->nb_philo = grab_arg(argv[1]);
-	if (arg->nb_philo == -1)
+	if (arg->nb_philo <= 0)
 		return ;
 	arg->time_die = grab_arg(argv[2]);
 	if (arg->time_die == -1)
@@ -46,7 +46,11 @@ void	parsing(t_data *arg, int argc, char **argv)
 	if (arg->time_sleep == -1)
 		return ;
 	if (argc == 6)
+	{
 		arg->nb_eat = grab_arg(argv[5]);
+		if (arg->nb_eat <= 0)
+			arg->nb_eat = -2;
+	}
 	else
 		arg->nb_eat = -1;
 }

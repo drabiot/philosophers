@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 17:38:37 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/14 20:14:15 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/15 22:15:56 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,13 @@ static int	init_philo(t_data *table)
 	i = 0;
 	while (i < table->nb_philo)
 	{
+		table->philos[i].table = table;
+		table->philos[i].nb_philo = table->nb_philo;
 		table->philos[i].id = i;
 		table->philos[i].nb_meal = 0;
 		table->philos[i].full_meal = FALSE;
 		table->philos[i].last_meal = 0;
-		ret = handle_mutex(&table->philos[i].philo, INIT);
+		ret = handle_mutex(&table->philos[i].philo_mutex, INIT);
 		if (ret != GOOD)
 			return (FAILED);
 		give_philo_forks(table, table->forks, i);

@@ -6,7 +6,7 @@
 #    By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/18 18:00:04 by tchartie          #+#    #+#              #
-#    Updated: 2024/05/14 18:01:58 by tchartie         ###   ########.fr        #
+#    Updated: 2024/05/15 21:23:34 by tchartie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,10 @@ SRCS		=		main.c \
 					parsing_utils.c \
 					data_init.c \
 					handle_mutex.c \
-					error_check.c
+					error_check.c \
+					simulation.c \
+					waiting.c \
+					get_time.c
 
 OBJS		=		$(SRCS:.c=.o)
 

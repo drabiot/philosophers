@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
-#include <unistd.h>
 
 void	error_msg(const char *str)
 {
