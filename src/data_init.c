@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 17:38:37 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/15 22:15:56 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/22 19:21:39 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ static int	init_fork(t_data *table)
 		if (ret != GOOD)
 			return (FAILED);
 		table->forks[i].id = i;
+		table->forks[i].available = TRUE;
 		i++;
 	}
 	return (GOOD);
@@ -34,15 +35,15 @@ static void	give_philo_forks(t_data *table, t_fork *fork, int pos)
 	int	philo_nb;
 
 	philo_nb = table->nb_philo;
-	if (table->philos->id % 2 == 0)
+	if (table->philos[pos].id % 2 == 0)
 	{
-		table->philos->first_fork = &fork[pos];
-		table->philos->second_fork = &fork[(pos + 1) % 2];
+		table->philos[pos].first_fork = &fork[pos];
+		table->philos[pos].second_fork = &fork[(pos + 1) % philo_nb];
 	}
 	else
 	{
-		table->philos->first_fork = &fork[(pos + 1) % 2];
-		table->philos->second_fork = &fork[pos];
+		table->philos[pos].first_fork = &fork[(pos + 1) % philo_nb];
+		table->philos[pos].second_fork = &fork[pos];
 	}
 }
 
@@ -54,13 +55,12 @@ static int	init_philo(t_data *table)
 	i = 0;
 	while (i < table->nb_philo)
 	{
-		table->philos[i].table = table;
 		table->philos[i].nb_philo = table->nb_philo;
 		table->philos[i].id = i;
 		table->philos[i].nb_meal = 0;
-		table->philos[i].full_meal = FALSE;
 		table->philos[i].last_meal = 0;
-		ret = handle_mutex(&table->philos[i].philo_mutex, INIT);
+		table->philos[i].table = table;
+		ret = handle_mutex(&table->print, INIT);
 		if (ret != GOOD)
 			return (FAILED);
 		give_philo_forks(table, table->forks, i);

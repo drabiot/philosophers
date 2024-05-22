@@ -6,85 +6,58 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 20:36:55 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/15 22:39:26 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/22 19:24:11 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
 
-void	write_status(char *str, t_philo *philo)
+void	write_status(t_state status, t_philo *philo, long time, long last_meal)
 {
-	long		time;
-
-	time = get_time() - philo->table->time_start;
-	if (time >= 0 && time <= 2147483647)
-	{
-		printf("%ld ", time);
-		printf("%d %s", philo->id, str);
-	}
+	if (handle_mutex(&philo->table->print, LOCK) == FAILED)
+		return ;
+	if (status == EAT && !(end_simulation(philo, last_meal, time)))
+		printf(W"%ld"C" %d is eating\n"RST, time, philo->id);
+	if (status == THINK && !(end_simulation(philo, last_meal, time)))
+		printf(W"%ld"R" %d is thinking\n"RST, time, philo->id);
+	if (status == SLEEP && !(end_simulation(philo, last_meal, time)))
+		printf(W"%ld"G" %d is sleeping\n"RST, time, philo->id);
+	if (status == DEAD)
+		printf(W"%ld"M" %d is dead\n"RST, time, philo->id);
+	handle_mutex(&philo->table->print, UNLOCK);
 }
 
-static void	eating(t_philo *philo)
+void	join_thread(t_data *table)
 {
-	handle_mutex(&philo->first_fork->fork, LOCK);
-	write_status("Take first Fork\n", philo);
-	handle_mutex(&philo->second_fork->fork, LOCK);
-	write_status("Take second Fork\n", philo);
-	philo->nb_meal++;
-	write_status("is eating\n", philo);
-	ft_usleep(philo->table->time_eat);
-	handle_mutex(&philo->first_fork->fork, UNLOCK);
-	handle_mutex(&philo->second_fork->fork, UNLOCK);
-}
-
-static void	sleeping(t_philo *philo)
-{
-	write_status("is sleeping\n", philo);
-	ft_usleep(philo->table->time_sleep);
-}
-
-static void	thinking(t_philo *philo)
-{
-	write_status("is thinking\n", philo);
-}
-
-static void	*start_simulation(void *arg)
-{
-	t_philo	*philo;
-	int		i;
+	int	i;
 
 	i = 0;
-	philo = (t_philo *)arg;
-	while (i < 10)
+	while (i < table->nb_philo)
 	{
-		eating(philo);
-		sleeping(philo);
-		thinking(philo);
+		if (handle_thread(&table->philos[i].philo_thread, JOIN, NULL, NULL)
+			!= GOOD)
+			return ;
 		i++;
 	}
-	return (0);
 }
 
 void	simulation_init(t_data *table)
 {
-	int	i;
+	int				i;
+	struct timeval	time;
 
 	i = 0;
 	if (table->nb_philo == -1 || table->time_die == -1 || table->time_eat == -1
 		|| table->time_sleep == -1 || table->nb_eat == -2)
 		return ;
-	else if (table->nb_philo == 1)
-		return ;
-		//TODO
-	else
+	gettimeofday(&time, NULL);
+	table->time_start = time;
+	while (i < table->nb_philo)
 	{
-		while (i < table->nb_philo)
-		{
-			handle_thread(&table->philos[i].philo_thread, CREATE,
-				start_simulation, &table->philos[i]);
-			i++;
-		}
-		table->time_start = get_time();
+		if (handle_thread(&table->philos[i].philo_thread, CREATE,
+				start_dinner, &table->philos[i]) != GOOD)
+			return ;
+		i++;
 	}
-
+	join_thread(table);
 }
