@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 20:36:55 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/22 19:24:11 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/23 18:29:02 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	write_status(t_state status, t_philo *philo, long time, long last_meal)
 	if (status == SLEEP && !(end_simulation(philo, last_meal, time)))
 		printf(W"%ld"G" %d is sleeping\n"RST, time, philo->id);
 	if (status == DEAD)
-		printf(W"%ld"M" %d is dead\n"RST, time, philo->id);
+		printf(W"%ld"M" %d died\n"RST, time, philo->id);
 	handle_mutex(&philo->table->print, UNLOCK);
 }
 

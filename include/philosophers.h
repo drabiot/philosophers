@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 17:58:00 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/22 19:30:39 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/23 18:58:46 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ typedef struct s_philo
 	t_fork			*second_fork;
 	pthread_t		philo_thread;
 	t_data			*table;
+	t_bool			full;
 }					t_philo;
 
 struct s_data
@@ -84,6 +85,7 @@ struct s_data
 	t_fork			*forks;
 	t_philo			*philos;
 	pthread_mutex_t	print;
+	pthread_mutex_t	table_mutex;
 };
 
 # define RST    "\033[0m"
@@ -117,5 +119,7 @@ void	*start_dinner(void *arg);
 t_bool	end_simulation(t_philo *philo, long last_meal, long time);
 t_bool	take_fork(t_fork *forks, t_philo *philo, long last_meal);
 void	finish_eating(t_philo *philo);
+void	change_fork(t_philo *philo);
+t_bool	full_up(t_data *table);
 
 #endif //PHILOSOPHERS_H

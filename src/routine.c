@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 18:14:08 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/22 19:29:15 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/23 19:27:01 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static t_bool	eating(t_philo *philo, long *last_meal)
 			finish_eating(philo);
 			return (FALSE);
 		}
-		usleep(philo->table->time_eat);
+		usleep(128);
 		time = get_time(philo->table->time_start);
 	}
 	return (TRUE);
@@ -56,7 +56,7 @@ static t_bool	sleeping(t_philo *philo, long last_meal)
 		}
 		if (time - save >= philo->table->time_sleep)
 			return (FALSE);
-		usleep(philo->table->time_sleep);
+		usleep(128);
 		time = get_time(philo->table->time_start);
 	}
 	return (TRUE);
@@ -70,6 +70,8 @@ static t_bool	thinking(t_philo *philo, long last_meal)
 	if (end_simulation(philo, last_meal, time))
 		return (TRUE);
 	write_status(THINK, philo, time, last_meal);
+	usleep(128);
+	change_fork(philo);
 	if (take_fork(philo->first_fork, philo, last_meal))
 		return (TRUE);
 	if (take_fork(philo->second_fork, philo, last_meal))
@@ -87,7 +89,9 @@ void	*start_dinner(void *arg)
 	philo = (t_philo *)arg;
 	philo->last_meal = get_time(philo->table->time_start);
 	last = philo->last_meal;
-	while (i < 10)
+	if (philo->id % 2 != 0)
+		usleep (50);
+	while (philo->table->nb_eat == -1 || !full_up(philo->table))
 	{
 		if (thinking(philo, last))
 			break ;
