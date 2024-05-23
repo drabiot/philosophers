@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 18:21:20 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/22 19:24:18 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/23 20:27:26 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	main(int argc, char **argv)
 	parsing(&table, argc, argv);
 	data_init(&table);
 	simulation_init(&table);
+	free_mutex(&table);
 	if (table.philos)
 		free(table.philos);
 	if (table.forks)

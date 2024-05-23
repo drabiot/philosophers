@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 17:58:00 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/23 18:58:46 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/23 20:27:15 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,5 +121,7 @@ t_bool	take_fork(t_fork *forks, t_philo *philo, long last_meal);
 void	finish_eating(t_philo *philo);
 void	change_fork(t_philo *philo);
 t_bool	full_up(t_data *table);
+
+void	free_mutex(t_data *table);
 
 #endif //PHILOSOPHERS_H

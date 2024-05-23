@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 21:28:03 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/22 18:09:48 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/23 20:16:59 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,4 +25,18 @@ void	error_msg(const char *str)
 		i++;
 	}
 	write (2, "\n", 1);
+}
+
+void	free_mutex(t_data *table)
+{
+	int	i;
+
+	i = 0;
+	while (i < table->nb_philo)
+	{
+		handle_mutex(&table->forks[i].fork, DESTROY);
+		i++;
+	}
+	handle_mutex(&table->print, DESTROY);
+	handle_mutex(&table->table_mutex, DESTROY);
 }
