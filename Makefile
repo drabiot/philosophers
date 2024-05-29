@@ -6,7 +6,7 @@
 #    By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/18 18:00:04 by tchartie          #+#    #+#              #
-#    Updated: 2024/05/21 18:18:48 by tchartie         ###   ########.fr        #
+#    Updated: 2024/05/28 20:13:39 by tchartie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,6 +51,7 @@ SRCS		=		main.c \
 					error_check.c \
 					simulation.c \
 					routine.c \
+					routine_utils.c \
 					waiting.c \
 					get_time.c
 

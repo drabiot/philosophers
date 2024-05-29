@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 17:38:37 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/23 19:20:49 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/29 20:41:43 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ static int	init_fork(t_data *table)
 		if (ret != GOOD)
 			return (FAILED);
 		table->forks[i].id = i + 1;
-		table->forks[i].available = TRUE;
 		i++;
 	}
 	return (GOOD);
@@ -62,6 +61,9 @@ static int	init_philo(t_data *table)
 		if (ret != GOOD)
 			return (FAILED);
 		ret = handle_mutex(&table->table_mutex, INIT);
+		if (ret != GOOD)
+			return (FAILED);
+		ret = handle_mutex(&table->death, INIT);
 		if (ret != GOOD)
 			return (FAILED);
 		give_philo_forks(table, table->forks, i);

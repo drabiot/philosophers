@@ -6,24 +6,23 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 20:36:55 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/23 18:29:02 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/29 23:37:34 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
 
-void	write_status(t_state status, t_philo *philo, long time, long last_meal)
+void	write_status(t_state status, t_philo *philo, long time)
 {
-	if (handle_mutex(&philo->table->print, LOCK) == FAILED)
-		return ;
-	if (status == EAT && !(end_simulation(philo, last_meal, time)))
+	handle_mutex(&philo->table->print, LOCK);
+	if (status == EAT && !(end_simulation(philo)))
 		printf(W"%ld"C" %d is eating\n"RST, time, philo->id);
-	if (status == THINK && !(end_simulation(philo, last_meal, time)))
+	if (status == THINK && !(end_simulation(philo)))
 		printf(W"%ld"R" %d is thinking\n"RST, time, philo->id);
-	if (status == SLEEP && !(end_simulation(philo, last_meal, time)))
+	if (status == SLEEP && !(end_simulation(philo)))
 		printf(W"%ld"G" %d is sleeping\n"RST, time, philo->id);
-	if (status == DEAD)
-		printf(W"%ld"M" %d died\n"RST, time, philo->id);
+	if (status == FORK && !(end_simulation(philo)))
+		printf(W"%ld"Y" %d has taken a fork\n"RST, time, philo->id);
 	handle_mutex(&philo->table->print, UNLOCK);
 }
 
@@ -59,5 +58,7 @@ void	simulation_init(t_data *table)
 			return ;
 		i++;
 	}
+	while (supervise_philo(table))
+		usleep(128);
 	join_thread(table);
 }

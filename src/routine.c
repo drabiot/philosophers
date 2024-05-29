@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 18:14:08 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/23 21:02:25 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/29 23:41:06 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,15 @@ static t_bool	eating(t_philo *philo, long *last_meal)
 
 	time = get_time(philo->table->time_start);
 	print = TRUE;
-	while (!end_simulation(philo, *last_meal, time))
+	while (!end_simulation(philo))
 	{
 		if (print)
 		{
-			write_status(EAT, philo, time, *last_meal);
+			write_status(EAT, philo, time);
 			print = FALSE;
+			handle_mutex(&philo->table->table_mutex, LOCK);
 			*last_meal = time;
+			handle_mutex(&philo->table->table_mutex, UNLOCK);
 		}
 		if (time - *last_meal >= philo->table->time_eat)
 		{
@@ -35,10 +37,11 @@ static t_bool	eating(t_philo *philo, long *last_meal)
 		usleep(128);
 		time = get_time(philo->table->time_start);
 	}
+	finish_eating(philo);
 	return (TRUE);
 }
 
-static t_bool	sleeping(t_philo *philo, long last_meal)
+static t_bool	sleeping(t_philo *philo)
 {
 	long	time;
 	long	save;
@@ -47,11 +50,11 @@ static t_bool	sleeping(t_philo *philo, long last_meal)
 	time = get_time(philo->table->time_start);
 	save = time;
 	print = TRUE;
-	while (!end_simulation(philo, last_meal, time))
+	while (!end_simulation(philo))
 	{
 		if (print)
 		{
-			write_status(SLEEP, philo, time, last_meal);
+			write_status(SLEEP, philo, time);
 			print = FALSE;
 		}
 		if (time - save >= philo->table->time_sleep)
@@ -62,7 +65,7 @@ static t_bool	sleeping(t_philo *philo, long last_meal)
 	return (TRUE);
 }
 
-static t_bool	thinking(t_philo *philo, long last_meal)
+static t_bool	thinking(t_philo *philo)
 {
 	long	time;
 	long	time_think;
@@ -72,17 +75,18 @@ static t_bool	thinking(t_philo *philo, long last_meal)
 	if (time_think <= 0)
 		time_think = 1;
 	time = get_time(philo->table->time_start);
-	if (end_simulation(philo, last_meal, time))
+	if (end_simulation(philo))
 		return (TRUE);
-	write_status(THINK, philo, time, last_meal);
+	write_status(THINK, philo, time);
 	if (time_think < 2147483647 / 100)
 		usleep(time_think * 100);
 	else
 		usleep(128);
-	change_fork(philo);
-	if (take_fork(philo->first_fork, philo, last_meal))
+	if (philo->id == philo->table->nb_philo)
+		change_fork(philo);
+	if (take_fork(philo->first_fork, philo))
 		return (TRUE);
-	if (take_fork(philo->second_fork, philo, last_meal))
+	if (take_fork(philo->second_fork, philo))
 		return (TRUE);
 	return (FALSE);
 }
@@ -90,22 +94,22 @@ static t_bool	thinking(t_philo *philo, long last_meal)
 void	*start_dinner(void *arg)
 {
 	t_philo	*philo;
-	long	last;
 	int		i;
 
 	i = 0;
 	philo = (t_philo *)arg;
+	handle_mutex(&philo->table->table_mutex, LOCK);
 	philo->last_meal = get_time(philo->table->time_start);
-	last = philo->last_meal;
-	if (philo->id % 2 != 0)
-		usleep (50);
+	handle_mutex(&philo->table->table_mutex, UNLOCK);
+	if (philo->id % 2 == 0)
+		usleep (128);
 	while (philo->table->nb_eat == -1 || !full_up(philo->table))
 	{
-		if (thinking(philo, last))
+		if (thinking(philo))
 			break ;
-		if (eating(philo, &last))
+		if (eating(philo, &philo->last_meal))
 			break ;
-		if (sleeping(philo, last))
+		if (sleeping(philo))
 			break ;
 		i++;
 	}

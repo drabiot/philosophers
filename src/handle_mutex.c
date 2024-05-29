@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 18:01:39 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/22 18:09:56 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:18:59 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	handle_mutex(pthread_mutex_t *mutex, t_opcode opcode)
 	}
 	if (ret == FAILED)
 	{
-		error_msg("Mutex failled");
+		error_msg("Mutex failed");
 		return (FAILED);
 	}
 	else
@@ -64,7 +64,7 @@ int	handle_thread(pthread_t *thread, t_opcode opcode, void *(func)(void *),
 	}
 	if (ret == FAILED)
 	{
-		error_msg("Mutex failled");
+		error_msg("Mutex failed");
 		return (FAILED);
 	}
 	else

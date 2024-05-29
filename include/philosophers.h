@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 17:58:00 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/23 20:27:15 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/29 23:39:54 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,12 @@ typedef enum e_state
 	EAT,
 	SLEEP,
 	THINK,
+	FORK,
 }			t_state;
 
 typedef struct s_fork
 {
 	int				id;
-	t_bool			available;
 	pthread_mutex_t	fork;
 }					t_fork;
 
@@ -71,6 +71,8 @@ typedef struct s_philo
 	pthread_t		philo_thread;
 	t_data			*table;
 	t_bool			full;
+	t_bool			dead;
+	t_bool			end;
 }					t_philo;
 
 struct s_data
@@ -86,6 +88,7 @@ struct s_data
 	t_philo			*philos;
 	pthread_mutex_t	print;
 	pthread_mutex_t	table_mutex;
+	pthread_mutex_t	death;
 };
 
 # define RST    "\033[0m"
@@ -112,15 +115,16 @@ int		handle_thread(pthread_t *thread, t_opcode opcode,
 void	simulation_init(t_data *table);
 long	get_time(struct timeval time);
 void	ft_usleep(long ms, t_data *table);
-void	write_status(t_state status, t_philo *philo, long time, long last_meal);
+void	write_status(t_state status, t_philo *philo, long time);
 
 void	join_thread(t_data *table);
 void	*start_dinner(void *arg);
-t_bool	end_simulation(t_philo *philo, long last_meal, long time);
-t_bool	take_fork(t_fork *forks, t_philo *philo, long last_meal);
+t_bool	end_simulation(t_philo *philo);
+t_bool	take_fork(t_fork *forks, t_philo *philo);
 void	finish_eating(t_philo *philo);
 void	change_fork(t_philo *philo);
 t_bool	full_up(t_data *table);
+t_bool	supervise_philo(t_data *table);
 
 void	free_mutex(t_data *table);
 
