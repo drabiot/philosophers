@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 17:38:37 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/29 20:41:43 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/30 23:16:48 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,25 @@ static void	give_philo_forks(t_data *table, t_fork *fork, int pos)
 	}
 }
 
-static int	init_philo(t_data *table)
+static int	init_mutex(t_data *table)
+{
+	int	ret;
+
+	ret = handle_mutex(&table->print, INIT);
+	if (ret != GOOD)
+		return (FAILED);
+	ret = handle_mutex(&table->table_mutex, INIT);
+	if (ret != GOOD)
+		return (FAILED);
+	ret = handle_mutex(&table->death, INIT);
+	if (ret != GOOD)
+		return (FAILED);
+	return (GOOD);
+}
+
+static void	init_philo(t_data *table)
 {
 	int	i;
-	int	ret;
 
 	i = 0;
 	while (i < table->nb_philo)
@@ -57,25 +72,10 @@ static int	init_philo(t_data *table)
 		table->philos[i].last_meal = 0;
 		table->philos[i].table = table;
 		table->philos[i].full = FALSE;
-		ret = handle_mutex(&table->print, INIT);
-		if (ret != GOOD)
-			return (FAILED);
-		ret = handle_mutex(&table->table_mutex, INIT);
-		if (ret != GOOD)
-			return (FAILED);
-		ret = handle_mutex(&table->death, INIT);
-		if (ret != GOOD)
-			return (FAILED);
+		table->philos[i].dead = FALSE;
 		give_philo_forks(table, table->forks, i);
 		i++;
 	}
-	return (GOOD);
-}
-
-static void	thread_error(t_data *table)
-{
-	free(table->philos);
-	free(table->forks);
 }
 
 void	data_init(t_data *table)
@@ -98,7 +98,8 @@ void	data_init(t_data *table)
 		thread_error(table);
 		return ;
 	}
-	ret = init_philo(table);
+	init_philo(table);
+	ret = init_mutex(table);
 	if (ret != GOOD)
 	{
 		thread_error(table);

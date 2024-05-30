@@ -6,11 +6,17 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 21:28:03 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/30 18:21:32 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/30 23:16:41 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philosophers.h"
+
+void	thread_error(t_data *table)
+{
+	free(table->philos);
+	free(table->forks);
+}
 
 void	error_msg(const char *str)
 {

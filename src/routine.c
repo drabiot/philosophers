@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 18:14:08 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/29 23:41:06 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/30 23:35:43 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,27 +67,19 @@ static t_bool	sleeping(t_philo *philo)
 
 static t_bool	thinking(t_philo *philo)
 {
-	long	time;
-	long	time_think;
+	long		time;
 
-	time_think = philo->table->time_die - philo->table->time_eat
-		- philo->table->time_sleep;
-	if (time_think <= 0)
-		time_think = 1;
 	time = get_time(philo->table->time_start);
 	if (end_simulation(philo))
 		return (TRUE);
 	write_status(THINK, philo, time);
-	if (time_think < 2147483647 / 100)
-		usleep(time_think * 100);
-	else
-		usleep(128);
-	if (philo->id == philo->table->nb_philo)
-		change_fork(philo);
+	usleep(128);
 	if (take_fork(philo->first_fork, philo))
 		return (TRUE);
 	if (take_fork(philo->second_fork, philo))
 		return (TRUE);
+	if (philo->id == philo->table->nb_philo)
+		change_fork(philo);
 	return (FALSE);
 }
 

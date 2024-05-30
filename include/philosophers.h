@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 17:58:00 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/29 23:39:54 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/30 23:28:44 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,32 +100,33 @@ struct s_data
 # define C      "\033[1;36m"
 # define W      "\033[1;37m" 
 
-void	parsing(t_data *arg, int argc, char **argv);
+void		parsing(t_data *arg, int argc, char **argv);
 
-long	ft_atol(const char *str);
-t_bool	is_int(const char *str);
+long long	ft_atol(const char *str);
+t_bool		is_int(const char *str);
 
-void	error_msg(const char *str);
+void		error_msg(const char *str);
+void		thread_error(t_data *table);
 
-void	data_init(t_data *table);
-int		handle_mutex(pthread_mutex_t *mutex, t_opcode opcode);
-int		handle_thread(pthread_t *thread, t_opcode opcode,
-			void *(func)(void *), void *arg);
+void		data_init(t_data *table);
+int			handle_mutex(pthread_mutex_t *mutex, t_opcode opcode);
+int			handle_thread(pthread_t *thread, t_opcode opcode,
+				void *(func)(void *), void *arg);
 
-void	simulation_init(t_data *table);
-long	get_time(struct timeval time);
-void	ft_usleep(long ms, t_data *table);
-void	write_status(t_state status, t_philo *philo, long time);
+void		simulation_init(t_data *table);
+long		get_time(struct timeval time);
+void		ft_usleep(long ms, t_data *table);
+void		write_status(t_state status, t_philo *philo, long time);
 
-void	join_thread(t_data *table);
-void	*start_dinner(void *arg);
-t_bool	end_simulation(t_philo *philo);
-t_bool	take_fork(t_fork *forks, t_philo *philo);
-void	finish_eating(t_philo *philo);
-void	change_fork(t_philo *philo);
-t_bool	full_up(t_data *table);
-t_bool	supervise_philo(t_data *table);
+void		join_thread(t_data *table);
+void		*start_dinner(void *arg);
+t_bool		end_simulation(t_philo *philo);
+t_bool		take_fork(t_fork *forks, t_philo *philo);
+void		finish_eating(t_philo *philo);
+void		change_fork(t_philo *philo);
+t_bool		full_up(t_data *table);
+t_bool		supervise_philo(t_data *table);
 
-void	free_mutex(t_data *table);
+void		free_mutex(t_data *table);
 
 #endif //PHILOSOPHERS_H
