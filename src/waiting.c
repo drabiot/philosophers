@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 21:18:00 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/29 23:36:04 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/30 18:32:12 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,11 @@ t_bool	supervise_philo(t_data *table)
 			table->philos[i].dead = TRUE;
 		if (table->philos[i].dead == TRUE)
 		{
-			printf(W"%ld"M" %d died\n"RST, time, table->philos[i].id);
-			set_end_philo(table);
 			handle_mutex(&table->table_mutex, UNLOCK);
+			handle_mutex(&table->print, LOCK);
+			printf(W"%ld"M" %d died\n"RST, time, table->philos[i].id);
+			handle_mutex(&table->print, UNLOCK);
+			set_end_philo(table);
 			return (FALSE);
 		}
 		handle_mutex(&table->table_mutex, UNLOCK);

@@ -6,7 +6,7 @@
 /*   By: tchartie <tchartie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 21:28:03 by tchartie          #+#    #+#             */
-/*   Updated: 2024/05/28 20:53:36 by tchartie         ###   ########.fr       */
+/*   Updated: 2024/05/30 18:21:32 by tchartie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,5 @@ void	free_mutex(t_data *table)
 	}
 	handle_mutex(&table->print, DESTROY);
 	handle_mutex(&table->table_mutex, DESTROY);
+	handle_mutex(&table->death, DESTROY);
 }
